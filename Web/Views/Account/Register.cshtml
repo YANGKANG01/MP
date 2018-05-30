@@ -1,0 +1,104 @@
+﻿@model MP.Models.Users.UserRegister
+
+@{
+    Layout = null;
+    ViewData["Title"] = "注册";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LanceL0t</title>
+    <style>
+        label.error {
+            color: red !important;
+            font-weight: normal !important;
+        }
+    </style>
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-box-body">
+            <p class="login-box-msg">欢迎，注册新用户</p>
+            <form id="frm" method="post">
+                <div class="form-group has-feedback">
+                    <input name="email" class="form-control" placeholder="邮箱">
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="password" name="password" id="password" class="form-control" placeholder="密码">
+
+                </div>
+                <div class="form-group has-feedback">
+                    <input type="password" name="confirm_password" class="form-control" placeholder="确认密码">
+                </div>
+                <div class="row">
+                    <div class="col-xs-8 checkbox">
+                        <label for="IsAgree">
+                            <input id="IsAgree" type="checkbox" checked name="IsAgree">  阅读并接受《<a href="#">用户协议</a>》
+                        </label>
+                    </div>
+                    <div class="col-xs-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">注册</button>
+                    </div>
+                </div>
+            </form>
+            <a asp-controller="Account" asp-action="Index" class="text-center">已有账号</a>
+        </div>
+    </div>
+</body>
+</html>
+<link href="~/css/site.css" rel="stylesheet" />
+<link href="~/plugin/font-awesome/css/font-awesome.css" rel="stylesheet" />
+<link href="~/plugin/bootstrap/css/bootstrap.css" rel="stylesheet" />
+<link href="~/plugin/adminlte/css/AdminLTE.css" rel="stylesheet" />
+
+<script src="~/plugin/jquery/jquery.min.js"></script>
+<script src="~/plugin/jquery.web-form.js"></script>
+<script src="~/plugin/jquery-validation/jquery.validate.min.js"></script>
+<script src="~/plugin/adminlte/js/adminlte.js"></script>
+<script src="~/plugin/layui/layui.all.js"></script>
+<script>
+    $("#frm").validate({
+        rules: {
+            password: {
+                required: true,
+                minlength: 6
+            },
+            confirm_password: {
+                required: true,
+                minlength: 6,
+                equalTo: "#password"
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            IsAgree: "required"
+        },
+        messages: {
+            password: {
+                required: "请输入密码",
+                minlength: "密码长度不能小于 6 个字母"
+            },
+            confirm_password: {
+                required: "请输入密码",
+                minlength: "密码长度不能小于 6 个字母",
+                equalTo: "两次密码输入不一致"
+            },
+            email: "邮箱格式非法",
+            IsAgree: "请阅读并勾选接受用户协议"
+        },
+        submitHandler: function (form) {
+            var data = $(form).formSerialize();
+            $.post("/Account/Register", data, function (data) {
+                switch (data.code) {
+                    case 1000: layer.msg('注册成功', { icon: 1 }); break;
+                    case 1021: layer.msg('账号已注册', { icon: 2 }); break;
+                    case 2001: layer.msg('注册失败', { icon: 2 }); break;
+                }
+            })
+        }
+    })
+</script>

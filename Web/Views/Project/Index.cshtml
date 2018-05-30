@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "项目管理列表";
+}
+<section class="content-header">
+    <div class="box-header">
+        <h3 class="box-title">项目管理列表</h3>
+    </div>
+    @*<ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#">管理</a></li>
+            <li class="active">菜单列表</li>
+        </ol>*@
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body">
+                    <!--search condition begin-->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="text-right">
+                                <a href="/Project/add" class="btn btn-info ">添加项目</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!--search condition end-->
+                    <table class="table display dataTable" id="js_table">
+                        <thead>
+                            <tr role="row">
+                                <th style="text-align:center">项目名称</th>
+                                <th style="text-align:center">所属公司</th>
+                                <th style="text-align:center">项目职位</th>
+                                <th style="text-align:center">项目规模(人)</th>
+                                <th style="text-align:center">项目时长</th>
+                                <th style="text-align:center">开始时间</th>
+                                <th style="text-align:center">结束时间</th>
+                                <th style="text-align:center">操作</th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<script src="~/require/require.js"></script>
+<script>
+    require(['jquery', 'datatables'], function () {
+        //渲染列表  页面初始化时
+        var t = $("#js_table").DataTable({
+            processing: true,
+            searching: false,//关闭搜索框
+            serverSide: true,//服务器分页
+            bAutoWidth: false,
+            ajax: {
+                "url": "/Project/GetProject",
+                "type": "post",
+                "dataSrc": "list",//这里是后台返回的数据对象
+                "data": function (d) {//d 是原始的发送给服务器的数据，默认很长。
+                    var param = {};//因为服务端排序，可以新建一个参数对象
+                    param.start = d.start;//开始的序号
+                    param.length = d.length;//要取的数据的条数
+                    return param;//自定义需要传递的参数。
+                }
+            }, "createdRow": function (row, data, index) {
+                /* 设置表格中的内容居中 */
+                $('td', row).attr("class", "text-center");
+            },
+            //定义列: 取相应属性字段
+            columns: [
+                { "data": "Name" },
+                { "data": "Company" },
+                { "data": "Place" },
+                { "data": "Scale" },
+                { "data": "ProjectTime" },
+                { "data": "StartTime" },
+                { "data": "EndTime" },
+                //操作列
+                {
+                    "data": "Id",
+                    "render": function (data, type, full, callback) {
+                        return (`<a class="btn btn-info btn-sm " href="/Project/add/${data}">详情</a>`);
+                    }
+                }
+            ],
+            aLengthMenu: [
+                [10, 25, 50, 100], [10, 25, 50, 100]
+            ],
+            paging: true,//分页
+            pagingType: "full_numbers",//显示首页尾页
+            ordering: false,//排序
+            info: true,//信息
+            language: {
+                url: '/plugin/datatables-plugins/i18n/zh-CN.json'
+            },
+            initComplete: function (settings, data) {
+
+            },
+            drawCallback: function (settings, data) {
+
+            }
+
+        });
+    })
+</script>
